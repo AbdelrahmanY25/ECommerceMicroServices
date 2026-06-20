@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/Services/" />
+  <Folder Name="/Services/Orders/">
+    <Project Path="Services/Orders/BussinesLogicLayer/BussinesLogicLayer.csproj" Id="e9f15471-a026-42c8-9f57-0a16ccbdd573" />
+    <Project Path="Services/Orders/DataAccessLayer/DataAccessLayer.csproj" Id="ed1d92b8-9515-42cf-b1f4-4816ef164ac1" />
+    <Project Path="Services/Orders/Orders.Api/Orders.Api.csproj" Id="9dade688-6afa-46f7-8d5f-94195a4bde73" />
+  </Folder>
+  <Folder Name="/Services/Products/">
+    <Project Path="Services/Products/BussinessLogicLayer/BussinessLogicLayer.csproj" Id="b208ed3e-31d3-4081-9cb0-6731d2eb2dd5" />
+    <Project Path="Services/Products/DataAccessLayer/DataAccessLayer.csproj" Id="74a03d07-b235-4c50-b2f2-71e16bb72c2d" />
+    <Project Path="Services/Products/Products.Api/Products.Api.csproj" Id="de0cbb24-5ef7-42cf-9b7e-5c1e310db150" />
+  </Folder>
+  <Folder Name="/Services/Users/">
+    <Project Path="Services/Users/Users.Api/Users.Api.csproj" Id="817cbaec-71aa-41bb-9a64-126c4f6def50" />
+    <Project Path="Services/Users/Users.Application/Users.Application.csproj" Id="c56df3e2-be2c-4336-a755-011c596e24fb" />
+    <Project Path="Services/Users/Users.Domain/Users.Domain.csproj" Id="730aea16-633e-4cd8-a7e4-0537937a0785" />
+    <Project Path="Services/Users/Users.Infrastructure/Users.Infrastructure.csproj" Id="bdde2163-2335-423b-8c5f-c75480230469" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>

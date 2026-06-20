@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  # Database services
+
+  # usersdb: PostgreSQL database for the Users API
+  usersdb:
+    container_name: usersdb
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=usersdb
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_users:/var/lib/postgresql/18/data
+
+  # productsdb: MySQL database for the Products API
+  productsdb:
+    container_name: productsdb
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=productsdb
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=admin
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_products:/var/lib/mysql
+  
+  # ordersdb: MongoDB database for the Orders API
+  ordersdb:
+    container_name: ordersdb
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_orders:/data/db
+  
+  # API services
+
+  # Users API service
+  users.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__Database=Server=usersdb;Port=5432;Database=usersDb;User Id=postgres;Password=postgres;Include Error Detail=true
+    depends_on:
+      - usersdb 
+    ports:
+      - "9898:8080"
+      - "8795:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  
+  # Products API service
+  products.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__Database=Server=productsdb;Port=3306;Database=productsDb;User Id=root;Password=admin;Include Error Detail=true
+    depends_on:
+      - productsdb
+    ports:
+      - "9899:8080"
+      - "8796:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  # Orders API service
+  orders.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__Database="mongodb://$MONGO_HOST:$MONGO_PORT"
+    depends_on:
+      - ordersdb
+    ports:
+      - "9900:8080"
+      - "8797:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
