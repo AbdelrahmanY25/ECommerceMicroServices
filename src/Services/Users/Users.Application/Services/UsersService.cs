@@ -31,4 +31,15 @@ internal class UsersService(IUsersRepository usersRepository) : IUsersService
 
 		return registeredUser.Adapt<AuthenticationResponse>() with { Token = "token", Success = true};
 	}
+
+	public async Task<UserResponse?> GetUserById(Guid? userID)
+	{
+		ApplicationUser? user = await _usersRepository.GetUserById(userID);
+
+		if (user is null)
+			return null;
+
+		return user.Adapt<UserResponse>();
+	}
+
 }
