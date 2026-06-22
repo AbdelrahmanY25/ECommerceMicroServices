@@ -10,6 +10,8 @@ public static class DependencyInjection
 				options.UseMySQL(configuration.GetConnectionString("DefaultConnection")!);
 			});
 
+			services.AddScoped<IProductsRepository, ProductsRepository>();
+
 			return services;
 		}
 	}

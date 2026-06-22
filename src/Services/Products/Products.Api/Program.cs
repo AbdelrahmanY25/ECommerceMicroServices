@@ -28,6 +28,8 @@ app.UseExceptionHandlingMiddleware();
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseAuthentication();
 
 app.UseAuthorization();

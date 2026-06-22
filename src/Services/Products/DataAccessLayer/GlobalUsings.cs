@@ -5,6 +5,7 @@ global using System.ComponentModel.DataAnnotations;
 
 global using DataAccessLayer.Context;
 global using DataAccessLayer.Entities;
+global using DataAccessLayer.Repositories;
 global using DataAccessLayer.IRepositories;
 
 

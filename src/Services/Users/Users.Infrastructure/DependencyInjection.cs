@@ -4,7 +4,7 @@ public static class DependencyInjection
 {
 	extension(IServiceCollection services)
 	{
-		public IServiceCollection AddInfrastructure()
+		public IServiceCollection AddInfrastructureServices()
 		{
 			services.AddTransient<AppDbContext>();
 			

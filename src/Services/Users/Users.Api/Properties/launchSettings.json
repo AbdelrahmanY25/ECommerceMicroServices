@@ -8,7 +8,7 @@
         "POSTGRES_PORT": "5432",
 		"POSTGRES_DATABASE": "usersDb",
 		"POSTGRES_USER": "postgres",
-		"POSTGRES_PASSWORD": "postgres"
+        "POSTGRES_PASSWORD": "postgres"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5287"

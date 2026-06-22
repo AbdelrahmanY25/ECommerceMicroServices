@@ -18,6 +18,6 @@ global using Microsoft.Extensions.DependencyInjection;
 
 
 
-global using MapsterMapper;
+global using Mapster;
 global using FluentValidation;
 global using FluentValidation.Results;

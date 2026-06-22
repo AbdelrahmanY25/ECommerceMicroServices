@@ -1,10 +1,9 @@
 ﻿namespace BussinessLogicLayer.Services;
 
-public class ProductsService(IValidator<ProductAddRequest> productAddRequestValidator, IValidator<ProductUpdateRequest> productUpdateRequestValidator, IMapper mapper, IProductsRepository productsRepository) : IProductsService
+public class ProductsService(IValidator<ProductAddRequest> productAddRequestValidator, IValidator<ProductUpdateRequest> productUpdateRequestValidator, IProductsRepository productsRepository) : IProductsService
 {
 	private readonly IValidator<ProductAddRequest> _productAddRequestValidator = productAddRequestValidator;
 	private readonly IValidator<ProductUpdateRequest> _productUpdateRequestValidator = productUpdateRequestValidator;
-	private readonly IMapper _mapper = mapper;
 	private readonly IProductsRepository _productsRepository = productsRepository;
 
 	public async Task<ProductResponse?> AddProduct(ProductAddRequest productAddRequest)
@@ -20,7 +19,7 @@ public class ProductsService(IValidator<ProductAddRequest> productAddRequestVali
 			}
 
 
-			Product productInput = _mapper.Map<Product>(productAddRequest);
+			Product productInput = productAddRequest.Adapt<Product>();
 			Product? addedProduct = await _productsRepository.AddProduct(productInput);
 
 			if (addedProduct is null)
@@ -28,7 +27,7 @@ public class ProductsService(IValidator<ProductAddRequest> productAddRequestVali
 				return null;
 			}
 
-			ProductResponse addedProductResponse = _mapper.Map<ProductResponse>(addedProduct);
+			ProductResponse addedProductResponse = addedProduct.Adapt<ProductResponse>();
 
 			return addedProductResponse;
 		}
@@ -59,7 +58,7 @@ public class ProductsService(IValidator<ProductAddRequest> productAddRequestVali
 			return null;
 		}
 
-		ProductResponse productResponse = _mapper.Map<ProductResponse>(product);
+		ProductResponse productResponse = product.Adapt<ProductResponse>();
 		return productResponse;
 	}
 
@@ -69,7 +68,7 @@ public class ProductsService(IValidator<ProductAddRequest> productAddRequestVali
 		IEnumerable<Product?> products = await _productsRepository.GetProducts();
 
 
-		IEnumerable<ProductResponse?> productResponses = _mapper.Map<IEnumerable<ProductResponse>>(products);
+		IEnumerable<ProductResponse?> productResponses = products.Adapt<IEnumerable<ProductResponse>>();
 		return [.. productResponses];
 	}
 
@@ -78,7 +77,7 @@ public class ProductsService(IValidator<ProductAddRequest> productAddRequestVali
 	{
 		IEnumerable<Product?> products = await _productsRepository.GetProductsByCondition(conditionExpression);
 
-		IEnumerable<ProductResponse?> productResponses = _mapper.Map<IEnumerable<ProductResponse>>(products);
+		IEnumerable<ProductResponse?> productResponses = products.Adapt<IEnumerable<ProductResponse>>();
 		return [.. productResponses];
 	}
 
@@ -100,11 +99,11 @@ public class ProductsService(IValidator<ProductAddRequest> productAddRequestVali
 			throw new ArgumentException(errors);
 		}
 
-		Product product = _mapper.Map<Product>(productUpdateRequest);
+		Product product = productUpdateRequest.Adapt<Product>();
 
 		Product? updatedProduct = await _productsRepository.UpdateProduct(product);
 
-		ProductResponse? updatedProductResponse = _mapper.Map<ProductResponse>(updatedProduct);
+		ProductResponse? updatedProductResponse = updatedProduct.Adapt<ProductResponse>();
 
 		return updatedProductResponse;
 	}

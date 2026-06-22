@@ -9,8 +9,8 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=usersdb
-    restart: always
+      - POSTGRES_DB=usersDb
+    restart: unless-stopped
     ports:
       - "5432:5432"
     volumes:
@@ -21,10 +21,10 @@ services:
     container_name: productsdb
     environment:
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=productsdb
-      - MYSQL_USER=root
+      - MYSQL_DATABASE=productsDb
+      - MYSQL_USER=appuser
       - MYSQL_PASSWORD=admin
-    restart: always
+    restart: unless-stopped
     ports:
       - "3306:3306"
     volumes:
@@ -33,8 +33,7 @@ services:
   # ordersdb: MongoDB database for the Orders API
   ordersdb:
     container_name: ordersdb
-    image: mongo
-    restart: always
+    restart: unless-stopped
     ports:
       - "27017:27017"
     volumes:
@@ -48,12 +47,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
-      - ConnectionStrings__Database=Server=usersdb;Port=5432;Database=usersDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - ConnectionStrings__DefaultConnection=Server=$POSTGRES_HOST;Port=$POSTGRES_PORT;Database=$POSTGRES_DATABASE;User Id=$POSTGRES_USER;Password=$POSTGRES_PASSWORD;Include Error Detail=true;
     depends_on:
       - usersdb 
     ports:
-      - "9898:8080"
-      - "8795:8081"
+      - "7070:8080"
+      - "7777:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
@@ -66,12 +65,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
-      - ConnectionStrings__Database=Server=productsdb;Port=3306;Database=productsDb;User Id=root;Password=admin;Include Error Detail=true
+      - ConnectionStrings__DefaultConnection=Server=productsdb;Port=3306;Database=productsDb;User Id=appuser;Password=admin;Include Error Detail=true
     depends_on:
       - productsdb
     ports:
-      - "9899:8080"
-      - "8796:8081"
+      - "7071:8080"
+      - "7778:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
@@ -84,12 +83,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
-      - ConnectionStrings__Database="mongodb://$MONGO_HOST:$MONGO_PORT"
+      - ConnectionStrings__DefaultConnection=mongodb://ordersdb:27017
     depends_on:
       - ordersdb
     ports:
-      - "9900:8080"
-      - "8797:8081"
+      - "7072:8080"
+      - "7779:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

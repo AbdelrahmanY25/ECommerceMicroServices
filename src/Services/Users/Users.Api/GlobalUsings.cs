@@ -12,4 +12,10 @@ global using Users.Application.IServices;
 global using Users.Infrastructure;
 
 
+
+global using HealthChecks.UI.Client;
+
+
+
 global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.AspNetCore.Diagnostics.HealthChecks;

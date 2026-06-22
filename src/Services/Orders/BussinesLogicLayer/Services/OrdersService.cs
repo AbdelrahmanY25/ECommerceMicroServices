@@ -1,12 +1,16 @@
 ﻿namespace BussinesLogicLayer.Services;
 
-public class OrdersService(IOrdersRepository ordersRepository, IMapper mapper, IValidator<OrderAddRequest> orderAddRequestValidator, IValidator<OrderItemAddRequest> orderItemAddRequestValidator, IValidator<OrderUpdateRequest> orderUpdateRequestValidator, IValidator<OrderItemUpdateRequest> orderItemUpdateRequestValidator) : IOrdersService
+public class OrdersService(IOrdersRepository ordersRepository, IValidator<OrderAddRequest> orderAddRequestValidator,
+					       IValidator<OrderItemAddRequest> orderItemAddRequestValidator,
+						   IValidator<OrderUpdateRequest> orderUpdateRequestValidator,
+						   IValidator<OrderItemUpdateRequest> orderItemUpdateRequestValidator,
+						   IUsersMicroserviceClient usersMicroserviceClient) : IOrdersService
 {
   private readonly IValidator<OrderAddRequest> _orderAddRequestValidator = orderAddRequestValidator;
   private readonly IValidator<OrderItemAddRequest> _orderItemAddRequestValidator = orderItemAddRequestValidator;
   private readonly IValidator<OrderUpdateRequest> _orderUpdateRequestValidator = orderUpdateRequestValidator;
   private readonly IValidator<OrderItemUpdateRequest> _orderItemUpdateRequestValidator = orderItemUpdateRequestValidator;
-  private readonly IMapper _mapper = mapper;
+  private readonly IUsersMicroserviceClient _usersMicroserviceClient = usersMicroserviceClient;
   private readonly IOrdersRepository _ordersRepository = ordersRepository;
 
 	public async Task<OrderResponse?> AddOrder(OrderAddRequest orderAddRequest)
@@ -31,7 +35,10 @@ public class OrdersService(IOrdersRepository ordersRepository, IMapper mapper, I
 				}
 			}
 
-			Order orderInput = _mapper.Map<Order>(orderAddRequest);
+			UserResponse? user = await _usersMicroserviceClient.GetUserById(orderAddRequest.UserID) ??
+				throw new ArgumentException($"User with ID {orderAddRequest.UserID} does not exist.");
+
+			Order orderInput = orderAddRequest.Adapt<Order>();
 
 			//Generate values
 			foreach (OrderItem orderItem in orderInput.OrderItems)
@@ -49,7 +56,7 @@ public class OrdersService(IOrdersRepository ordersRepository, IMapper mapper, I
 				return null;
 			}
 
-			OrderResponse addedOrderResponse = _mapper.Map<OrderResponse>(addedOrder); //Map addedOrder ('Order' type) into 'OrderResponse' type (it invokes OrderToOrderResponseMappingProfile).
+			OrderResponse addedOrderResponse = addedOrder.Adapt<OrderResponse>();
 
 			return addedOrderResponse;
 		}
@@ -81,7 +88,10 @@ public class OrdersService(IOrdersRepository ordersRepository, IMapper mapper, I
 				}
 			}
 
-			Order orderInput = _mapper.Map<Order>(orderUpdateRequest);
+			UserResponse? user = await _usersMicroserviceClient.GetUserById(orderUpdateRequest.UserID) ??
+				throw new ArgumentException($"User with ID {orderUpdateRequest.UserID} does not exist.");
+
+			Order orderInput = orderUpdateRequest.Adapt<Order>();
 
 			foreach (OrderItem orderItem in orderInput.OrderItems)
 				orderItem.TotalPrice = orderItem.Quantity * orderItem.UnitPrice;
@@ -93,7 +103,7 @@ public class OrdersService(IOrdersRepository ordersRepository, IMapper mapper, I
 			if (updatedOrder is null)
 				return null;
 
-			OrderResponse updatedOrderResponse = _mapper.Map<OrderResponse>(updatedOrder);
+			OrderResponse updatedOrderResponse = updatedOrder.Adapt<OrderResponse>();
 
 			return updatedOrderResponse;
 		}
@@ -122,7 +132,7 @@ public class OrdersService(IOrdersRepository ordersRepository, IMapper mapper, I
     if (order is null)
       return null;
 
-    OrderResponse orderResponse = _mapper.Map<OrderResponse>(order);
+    OrderResponse orderResponse = order.Adapt<OrderResponse>();
     return orderResponse;
   }
 
@@ -132,7 +142,7 @@ public class OrdersService(IOrdersRepository ordersRepository, IMapper mapper, I
     IEnumerable<Order?> orders = await _ordersRepository.GetOrdersByCondition(filter);
     
 
-    IEnumerable<OrderResponse?> orderResponses = _mapper.Map<IEnumerable<OrderResponse>>(orders); 
+    IEnumerable<OrderResponse?> orderResponses = orders.Adapt<IEnumerable<OrderResponse?>>(); 
     return [.. orderResponses];
   }
 
@@ -142,7 +152,7 @@ public class OrdersService(IOrdersRepository ordersRepository, IMapper mapper, I
     IEnumerable<Order?> orders = await _ordersRepository.GetOrders();
 
 
-    IEnumerable<OrderResponse?> orderResponses = _mapper.Map<IEnumerable<OrderResponse>>(orders);
+    IEnumerable<OrderResponse?> orderResponses = orders.Adapt<IEnumerable<OrderResponse?>>();
     return [.. orderResponses];
   }
 }

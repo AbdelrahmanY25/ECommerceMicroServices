@@ -4,7 +4,7 @@ public static class DependencyInjection
 {
 	extension(IServiceCollection services)
 	{
-		public IServiceCollection AddBusinessLogicLayer(IConfiguration configuration)
+		public IServiceCollection AddBusinessLogicLayer()
 		{
 			services.AddValidatorsFromAssemblyContaining<OrderAddRequestValidator>();
 

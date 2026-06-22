@@ -1,6 +1,7 @@
 ﻿global using BussinesLogicLayer;
 global using BussinesLogicLayer.Contracts;
 global using BussinesLogicLayer.IServices;
+global using BussinesLogicLayer.HttpClients.Users;
 
 
 
