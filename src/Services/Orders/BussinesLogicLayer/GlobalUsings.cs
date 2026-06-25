@@ -8,7 +8,9 @@ global using BussinesLogicLayer.Contracts;
 global using BussinesLogicLayer.IServices;
 global using BusinessLogicLayer.Validators;
 global using BussinesLogicLayer.Contracts.Users;
+global using BussinesLogicLayer.Contracts.Products;
 global using BussinesLogicLayer.HttpClients.Users;
+global using BussinesLogicLayer.HttpClients.Products;
 
 
 

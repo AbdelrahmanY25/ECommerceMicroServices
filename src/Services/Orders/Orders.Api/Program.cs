@@ -18,6 +18,14 @@ builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
 	client.BaseAddress = new Uri($"http://{host}:{port}");
 });
 
+builder.Services.AddHttpClient<ProductsMicroserviceClient>(client =>
+{
+	string host = builder.Configuration["PRODUCTS_MICROSERVICE_HOST"]!;
+	string port = builder.Configuration["PRODUCTS_MICROSERVICE_PORT"]!;
+
+	client.BaseAddress = new Uri($"http://{host}:{port}");
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

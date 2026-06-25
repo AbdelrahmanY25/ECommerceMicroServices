@@ -4,7 +4,6 @@ public static class ProductAPIEndpoints
 {
 	public static IEndpointRouteBuilder MapProductAPIEndpoints(this IEndpointRouteBuilder app)
 	{
-		//GET /api/products
 		app.MapGet("/api/products", async (IProductsService productsService) =>
 		{
 			List<ProductResponse?> products = await productsService.GetProducts();

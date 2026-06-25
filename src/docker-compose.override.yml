@@ -73,13 +73,14 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - ConnectionStrings__DefaultConnection=Server=productsdb;Port=3306;Database=productsDb;User Id=appuser;Password=admin;Include Error Detail=true
+      - ConnectionStrings__DefaultConnection=Server=productsdb;Port=3306;Database=productsDb;User Id=appuser;Password=admin;
     depends_on:
       - productsdb
     ports:
       - "7071:8080"
     networks:
       - products-mysql-network
+      - services-network
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
@@ -93,11 +94,14 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - USERS_MICROSERVICE_HOST=users.api
-      - USERS_MICROSERVICE_PORT=8080 
+      - USERS_MICROSERVICE_PORT=8080
+      - PRODUCTS_MICROSERVICE_HOST=products.api
+      - PRODUCTS_MICROSERVICE_PORT=8080
       - ConnectionStrings__DefaultConnection=mongodb://ordersdb:27017
     depends_on:
       - ordersdb
-      - users.api 
+      - users.api
+      - products.api
     ports:
       - "7072:8080"
     networks:

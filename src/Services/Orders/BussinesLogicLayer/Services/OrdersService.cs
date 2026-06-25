@@ -4,13 +4,15 @@ public class OrdersService(IOrdersRepository ordersRepository, IValidator<OrderA
 					       IValidator<OrderItemAddRequest> orderItemAddRequestValidator,
 						   IValidator<OrderUpdateRequest> orderUpdateRequestValidator,
 						   IValidator<OrderItemUpdateRequest> orderItemUpdateRequestValidator,
-						   UsersMicroserviceClient usersMicroserviceClient) : IOrdersService
+						   UsersMicroserviceClient usersMicroserviceClient,
+						   ProductsMicroserviceClient productsMicroserviceClient) : IOrdersService
 {
   private readonly IValidator<OrderAddRequest> _orderAddRequestValidator = orderAddRequestValidator;
   private readonly IValidator<OrderItemAddRequest> _orderItemAddRequestValidator = orderItemAddRequestValidator;
   private readonly IValidator<OrderUpdateRequest> _orderUpdateRequestValidator = orderUpdateRequestValidator;
   private readonly IValidator<OrderItemUpdateRequest> _orderItemUpdateRequestValidator = orderItemUpdateRequestValidator;
   private readonly UsersMicroserviceClient _usersMicroserviceClient = usersMicroserviceClient;
+  private readonly ProductsMicroserviceClient _productsMicroserviceClient = productsMicroserviceClient;
   private readonly IOrdersRepository _ordersRepository = ordersRepository;
 
 	public async Task<OrderResponse?> AddOrder(OrderAddRequest orderAddRequest)
@@ -33,6 +35,9 @@ public class OrdersService(IOrdersRepository ordersRepository, IValidator<OrderA
 					string errors = string.Join(", ", orderItemAddRequestValidationResult.Errors.Select(temp => temp.ErrorMessage));
 					throw new ArgumentException(errors);
 				}
+
+				ProductResponse? product = await _productsMicroserviceClient.GetProductById(orderItemAddRequest.ProductID) ??
+					throw new ArgumentException($"Product with ID {orderItemAddRequest.ProductID} does not exist.");
 			}
 
 			UserResponse? user = await _usersMicroserviceClient.GetUserById(orderAddRequest.UserID) ??
@@ -84,6 +89,9 @@ public class OrdersService(IOrdersRepository ordersRepository, IValidator<OrderA
 					string errors = string.Join(", ", orderItemUpdateRequestValidationResult.Errors.Select(temp => temp.ErrorMessage));
 					throw new ArgumentException(errors);
 				}
+
+				ProductResponse? product = await _productsMicroserviceClient.GetProductById(orderItemUpdateRequest.ProductID) ??
+					throw new ArgumentException($"Product with ID {orderItemUpdateRequest.ProductID} does not exist.");
 			}
 
 			UserResponse? user = await _usersMicroserviceClient.GetUserById(orderUpdateRequest.UserID) ??

@@ -10,7 +10,6 @@ public class ProductsRepository(ApplicationDbContext dbContext) : IProductsRepos
 		await _dbContext.SaveChangesAsync();
 		return product;
 	}
-
 	public async Task<bool> DeleteProduct(Guid productID)
 	{
 		Product? existingProduct = await _dbContext.Products.FirstOrDefaultAsync(temp => temp.ProductID == productID);
@@ -24,24 +23,20 @@ public class ProductsRepository(ApplicationDbContext dbContext) : IProductsRepos
 		return affectedRowsCount > 0;
 	}
 
-
 	public async Task<Product?> GetProductByCondition(Expression<Func<Product, bool>> conditionExpression)
 	{
 		return await _dbContext.Products.FirstOrDefaultAsync(conditionExpression);
 	}
-
 
 	public async Task<IEnumerable<Product>> GetProducts()
 	{
 		return await _dbContext.Products.ToListAsync();
 	}
 
-
 	public async Task<IEnumerable<Product?>> GetProductsByCondition(Expression<Func<Product, bool>> conditionExpression)
 	{
 		return await _dbContext.Products.Where(conditionExpression).ToListAsync();
 	}
-
 
 	public async Task<Product?> UpdateProduct(Product product)
 	{

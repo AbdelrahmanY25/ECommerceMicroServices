@@ -1,6 +1,7 @@
 using BussinessLogicLayer;
 using DataAccessLayer;
 using FluentValidation.AspNetCore;
+using Products.Api.Endpoints;
 using Products.Api.Middlewares;
 using System.Text.Json.Serialization;
 
@@ -35,5 +36,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapProductAPIEndpoints();
 
 app.Run();
