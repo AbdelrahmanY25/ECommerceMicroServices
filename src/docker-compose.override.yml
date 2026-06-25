@@ -11,10 +11,12 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=usersDb
     restart: unless-stopped
+    networks:
+      - users-postgres-network
     ports:
       - "5432:5432"
     volumes:
-      - postgres_users:/var/lib/postgresql/18/data
+      - ../postgresql-init:/docker-entrypoint-initdb.d
 
   # productsdb: MySQL database for the Products API
   productsdb:
@@ -27,8 +29,10 @@ services:
     restart: unless-stopped
     ports:
       - "3306:3306"
+    networks:
+      - products-mysql-network
     volumes:
-      - mysql_products:/var/lib/mysql
+      - ../mysql-init:/docker-entrypoint-initdb.d
   
   # ordersdb: MongoDB database for the Orders API
   ordersdb:
@@ -36,8 +40,10 @@ services:
     restart: unless-stopped
     ports:
       - "27017:27017"
+    networks:
+      - orders-mongo-network
     volumes:
-      - mongodb_orders:/data/db
+      - ../mongodb-init:/docker-entrypoint-initdb.d
   
   # API services
 
@@ -47,13 +53,14 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__DefaultConnection=Server=usersdb;Port=5432;Database=usersDb;User Id=postgres;Password=postgres;Include Error Detail=true;
     depends_on:
-      - usersdb 
+      - usersdb
     ports:
       - "7070:8080"
-      - "7777:8081"
+    networks:
+      - users-postgres-network
+      - services-network
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
@@ -66,13 +73,13 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__DefaultConnection=Server=productsdb;Port=3306;Database=productsDb;User Id=appuser;Password=admin;Include Error Detail=true
     depends_on:
       - productsdb
     ports:
       - "7071:8080"
-      - "7778:8081"
+    networks:
+      - products-mysql-network
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
@@ -85,16 +92,17 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
       - USERS_MICROSERVICE_HOST=users.api
-      - USERS_MICROSERVICE_PORT=8080
+      - USERS_MICROSERVICE_PORT=8080 
       - ConnectionStrings__DefaultConnection=mongodb://ordersdb:27017
     depends_on:
       - ordersdb
       - users.api 
     ports:
       - "7072:8080"
-      - "7779:8081"
+    networks:
+      - orders-mongo-network
+      - services-network 
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

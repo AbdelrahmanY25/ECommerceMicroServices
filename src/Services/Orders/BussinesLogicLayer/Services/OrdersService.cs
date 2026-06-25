@@ -64,8 +64,6 @@ public class OrdersService(IOrdersRepository ordersRepository, IValidator<OrderA
 		throw new ArgumentNullException(nameof(orderAddRequest));
 	}
 
-
-
 	public async Task<OrderResponse?> UpdateOrder(OrderUpdateRequest orderUpdateRequest)
 	{
 		if (orderUpdateRequest is not null)
@@ -111,48 +109,42 @@ public class OrdersService(IOrdersRepository ordersRepository, IValidator<OrderA
 		throw new ArgumentNullException(nameof(orderUpdateRequest));
 	}
 
-
 	public async Task<bool> DeleteOrder(Guid orderID)
-	  {
+	{
 		FilterDefinition<Order> filter = Builders<Order>.Filter.Eq(temp => temp.OrderID, orderID);
 		Order? existingOrder = await _ordersRepository.GetOrderByCondition(filter);
 
 		if (existingOrder is null)
-		  return false;
+			return false;
 
 		bool isDeleted = await _ordersRepository.DeleteOrder(orderID);
 		return isDeleted;
-	  }
+	}
 
+	public async Task<OrderResponse?> GetOrderByCondition(FilterDefinition<Order> filter)
+    {
+		Order? order = await _ordersRepository.GetOrderByCondition(filter);
 
-  public async Task<OrderResponse?> GetOrderByCondition(FilterDefinition<Order> filter)
-  {
-    Order? order = await _ordersRepository.GetOrderByCondition(filter);
+		if (order is null)
+		  return null;
 
-    if (order is null)
-      return null;
-
-    OrderResponse orderResponse = order.Adapt<OrderResponse>();
-    return orderResponse;
-  }
-
-
-  public async Task<List<OrderResponse?>> GetOrdersByCondition(FilterDefinition<Order> filter)
-  {
-    IEnumerable<Order?> orders = await _ordersRepository.GetOrdersByCondition(filter);
+		OrderResponse orderResponse = order.Adapt<OrderResponse>();
+		return orderResponse;
+    }
+	
+	public async Task<List<OrderResponse?>> GetOrdersByCondition(FilterDefinition<Order> filter)
+	{
+		IEnumerable<Order?> orders = await _ordersRepository.GetOrdersByCondition(filter);
     
+		IEnumerable<OrderResponse?> orderResponses = orders.Adapt<IEnumerable<OrderResponse?>>(); 
+		return [.. orderResponses];
+	}
 
-    IEnumerable<OrderResponse?> orderResponses = orders.Adapt<IEnumerable<OrderResponse?>>(); 
-    return [.. orderResponses];
-  }
+	public async Task<List<OrderResponse?>> GetOrders()
+	{
+		IEnumerable<Order?> orders = await _ordersRepository.GetOrders();
 
-
-  public async Task<List<OrderResponse?>> GetOrders()
-  {
-    IEnumerable<Order?> orders = await _ordersRepository.GetOrders();
-
-
-    IEnumerable<OrderResponse?> orderResponses = orders.Adapt<IEnumerable<OrderResponse?>>();
-    return [.. orderResponses];
-  }
+		IEnumerable<OrderResponse?> orderResponses = orders.Adapt<IEnumerable<OrderResponse?>>();
+		return [.. orderResponses];
+	}
 }

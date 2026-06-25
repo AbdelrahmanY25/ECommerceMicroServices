@@ -15,7 +15,7 @@ builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
 	string host = builder.Configuration["USERS_MICROSERVICE_HOST"]!;
 	string port = builder.Configuration["USERS_MICROSERVICE_PORT"]!;
 
-	client.BaseAddress = new Uri($"https://{host}:{port}");
+	client.BaseAddress = new Uri($"http://{host}:{port}");
 });
 
 var app = builder.Build();

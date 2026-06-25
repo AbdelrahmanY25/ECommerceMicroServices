@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   usersdb:
-    image: postgres
+    image: postgres:latest
     
   productsdb:
-    image: mysql
+    image: mysql:latest
   
   ordersdb:
-    image: mongo
+    image: mongo:latest
 
   users.api:
     image: ${DOCKER_REGISTRY-}usersapi
@@ -27,8 +27,13 @@ services:
     build:
       context: .
       dockerfile: Services/Orders/Orders.Api/Dockerfile
-
-volumes:
-  postgres_users:
-  mysql_products:
-  mongodb_orders:
+  
+networks:
+  orders-mongo-network:
+    driver: bridge
+  users-postgres-network:
+    driver: bridge
+  products-mysql-network:
+    driver: bridge
+  services-network:
+    driver: bridge

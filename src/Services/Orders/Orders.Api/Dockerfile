@@ -29,6 +29,4 @@ RUN dotnet publish "./Orders.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENV USERS_MICROSERVICE_HOST=users.api
-ENV USERS_MICROSERVICE_PORT=7777
 ENTRYPOINT ["dotnet", "Orders.Api.dll"]
