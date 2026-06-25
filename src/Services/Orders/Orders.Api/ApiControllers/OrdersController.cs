@@ -9,38 +9,38 @@ public class OrdersController(IOrdersService ordersService) : ControllerBase
 	[HttpGet]
 	public async Task<IEnumerable<OrderResponse?>> Get()
 	{
-	List<OrderResponse?> orders = await _ordersService.GetOrders();
-	return orders;
+		List<OrderResponse?> orders = await _ordersService.GetOrders();
+		return orders;
 	}
 
-	[HttpGet]
+	[HttpGet("{orderID}")]
 	public async Task<OrderResponse?> GetOrderByOrderID(Guid orderID)
 	{
-	FilterDefinition<Order> filter = Builders<Order>.Filter.Eq(temp => temp.OrderID, orderID);
+		FilterDefinition<Order> filter = Builders<Order>.Filter.Eq(temp => temp.OrderID, orderID);
 
-	OrderResponse? order = await _ordersService.GetOrderByCondition(filter);
-	return order;
+		OrderResponse? order = await _ordersService.GetOrderByCondition(filter);
+		return order;
 	}
 
-	[HttpGet]
+	[HttpGet("product/{productID}")]
 	public async Task<IEnumerable<OrderResponse?>> GetOrdersByProductID(Guid productID)
 	{
-	FilterDefinition<Order> filter = Builders<Order>.Filter.ElemMatch(temp => temp.OrderItems, 
-		Builders<OrderItem>.Filter.Eq(tempProduct => tempProduct.ProductID, productID)
-		);
+		FilterDefinition<Order> filter = Builders<Order>.Filter.ElemMatch(temp => temp.OrderItems, 
+			Builders<OrderItem>.Filter.Eq(tempProduct => tempProduct.ProductID, productID)
+			);
 
-	List<OrderResponse?> orders = await _ordersService.GetOrdersByCondition(filter);
-	return orders;
+		List<OrderResponse?> orders = await _ordersService.GetOrdersByCondition(filter);
+		return orders;
 	}
 
-	[HttpGet]
+	[HttpGet("date/{orderDate}")]
 	public async Task<IEnumerable<OrderResponse?>> GetOrdersByOrderDate(DateTime orderDate)
 	{
-	FilterDefinition<Order> filter = Builders<Order>.Filter.Eq(temp => temp.OrderDate.ToString("yyyy-MM-dd"), orderDate.ToString("yyyy-MM-dd")
-		);
+		FilterDefinition<Order> filter = Builders<Order>.Filter
+			.Eq(temp => temp.OrderDate.ToString("yyyy-MM-dd"), orderDate.ToString("yyyy-MM-dd"));
 
-	List<OrderResponse?> orders = await _ordersService.GetOrdersByCondition(filter);
-	return orders;
+		List<OrderResponse?> orders = await _ordersService.GetOrdersByCondition(filter);
+		return orders;
 	}
 
 	[HttpPost]

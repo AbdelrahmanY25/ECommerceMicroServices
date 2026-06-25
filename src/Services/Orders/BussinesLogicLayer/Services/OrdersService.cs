@@ -4,13 +4,13 @@ public class OrdersService(IOrdersRepository ordersRepository, IValidator<OrderA
 					       IValidator<OrderItemAddRequest> orderItemAddRequestValidator,
 						   IValidator<OrderUpdateRequest> orderUpdateRequestValidator,
 						   IValidator<OrderItemUpdateRequest> orderItemUpdateRequestValidator,
-						   IUsersMicroserviceClient usersMicroserviceClient) : IOrdersService
+						   UsersMicroserviceClient usersMicroserviceClient) : IOrdersService
 {
   private readonly IValidator<OrderAddRequest> _orderAddRequestValidator = orderAddRequestValidator;
   private readonly IValidator<OrderItemAddRequest> _orderItemAddRequestValidator = orderItemAddRequestValidator;
   private readonly IValidator<OrderUpdateRequest> _orderUpdateRequestValidator = orderUpdateRequestValidator;
   private readonly IValidator<OrderItemUpdateRequest> _orderItemUpdateRequestValidator = orderItemUpdateRequestValidator;
-  private readonly IUsersMicroserviceClient _usersMicroserviceClient = usersMicroserviceClient;
+  private readonly UsersMicroserviceClient _usersMicroserviceClient = usersMicroserviceClient;
   private readonly IOrdersRepository _ordersRepository = ordersRepository;
 
 	public async Task<OrderResponse?> AddOrder(OrderAddRequest orderAddRequest)

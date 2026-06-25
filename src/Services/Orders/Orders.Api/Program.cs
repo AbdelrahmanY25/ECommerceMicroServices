@@ -10,13 +10,13 @@ builder.Services.AddControllers();
 
 builder.Services.AddFluentValidationAutoValidation();
 
-builder.Services.AddHttpClient("UsersMicroservice", client =>
-{	
-	client.BaseAddress = new Uri(builder.Configuration
-		.GetValue<string>($"https://{builder.Configuration["USERS_MICROSERVICE_HOST"]}:{builder.Configuration["USERS_MICROSERVICE_PORT"]}")!);
-});
+builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
+{
+	string host = builder.Configuration["USERS_MICROSERVICE_HOST"]!;
+	string port = builder.Configuration["USERS_MICROSERVICE_PORT"]!;
 
-builder.Services.AddScoped<IUsersMicroserviceClient, UsersMicroserviceClient>();
+	client.BaseAddress = new Uri($"https://{host}:{port}");
+});
 
 var app = builder.Build();
 

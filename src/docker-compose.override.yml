@@ -43,11 +43,12 @@ services:
 
   # Users API service
   users.api:
+    container_name: users.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
-      - ConnectionStrings__DefaultConnection=Server=$POSTGRES_HOST;Port=$POSTGRES_PORT;Database=$POSTGRES_DATABASE;User Id=$POSTGRES_USER;Password=$POSTGRES_PASSWORD;Include Error Detail=true;
+      - ConnectionStrings__DefaultConnection=Server=usersdb;Port=5432;Database=usersDb;User Id=postgres;Password=postgres;Include Error Detail=true;
     depends_on:
       - usersdb 
     ports:
@@ -61,6 +62,7 @@ services:
   
   # Products API service
   products.api:
+    container_name: products.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
@@ -79,13 +81,17 @@ services:
 
   # Orders API service
   orders.api:
+    container_name: orders.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      - USERS_MICROSERVICE_HOST=users.api
+      - USERS_MICROSERVICE_PORT=8080
       - ConnectionStrings__DefaultConnection=mongodb://ordersdb:27017
     depends_on:
       - ordersdb
+      - users.api 
     ports:
       - "7072:8080"
       - "7779:8081"
