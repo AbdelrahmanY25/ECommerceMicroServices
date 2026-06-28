@@ -1,6 +1,3 @@
-using Orders.Api.Middlewares;
-using Polly;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -21,15 +18,9 @@ builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
 	client.BaseAddress = new Uri($"http://{host}:{port}");
 })
 .AddPolicyHandler(
-	Policy.HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
-		.WaitAndRetryAsync(
-			retryCount: 3,
-			sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(2),
-			onRetry: (outcome, timespan, retryAttempt, context) =>
-			{
-				// Log or handle the retry here
-			}
-		)
+	builder.Services.BuildServiceProvider()
+		.GetRequiredService<IUserMicroservicePolicies>()
+		.GetRetryPolicy()
 );
 
 builder.Services.AddHttpClient<ProductsMicroserviceClient>(client =>

@@ -10,6 +10,8 @@ public static class DependencyInjection
 
 			services.AddScoped<IOrdersService, OrdersService>();
 
+			services.AddTransient<IUserMicroservicePolicies, UserMicroservicePolicies>();
+
 			return services;
 		}
 	}

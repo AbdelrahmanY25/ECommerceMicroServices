@@ -1,8 +1,8 @@
-﻿global using System.Net;
-global using System.Net.Http.Json;
+﻿global using System.Net.Http.Json;
 
 
 
+global using BussinesLogicLayer.Policies;
 global using BussinesLogicLayer.Services;
 global using BussinesLogicLayer.Contracts;
 global using BussinesLogicLayer.IServices;
@@ -19,12 +19,14 @@ global using DataAccessLayer.IRepository;
 
 
 
+global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.DependencyInjection;
-global using Microsoft.Extensions.Configuration;
 
 
 
+global using Polly;
 global using Mapster;
+global using Polly.Retry;
 global using MongoDB.Driver;
 global using FluentValidation;
 global using FluentValidation.Results;
