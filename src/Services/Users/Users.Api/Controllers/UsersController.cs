@@ -9,6 +9,10 @@ public class UsersController(IUsersService usersService) : ControllerBase
 	[HttpGet("{userID}")]
 	public async Task<IActionResult> GetUserByUserID(Guid userID)
 	{
+		await Task.Delay(1000);
+
+		throw new Exception("This is a test exception for demonstration purposes.");
+
 		if (userID == Guid.Empty)
 			return BadRequest("Invalid User ID");
 
