@@ -20,12 +20,7 @@ builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
 .AddPolicyHandler(
 	builder.Services.BuildServiceProvider()
 		.GetRequiredService<IUserMicroservicePolicies>()
-		.GetRetryPolicy()
-)
-.AddPolicyHandler(
-	builder.Services.BuildServiceProvider()
-		.GetRequiredService<IUserMicroservicePolicies>()
-		.GetCircuitBreakerPolicy()
+		.GetCompinePolicy()
 );
 
 builder.Services.AddHttpClient<ProductsMicroserviceClient>(client =>
