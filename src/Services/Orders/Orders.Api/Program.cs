@@ -34,7 +34,12 @@ builder.Services.AddHttpClient<ProductsMicroserviceClient>(client =>
 	string port = builder.Configuration["PRODUCTS_MICROSERVICE_PORT"]!;
 
 	client.BaseAddress = new Uri($"http://{host}:{port}");
-});
+})
+.AddPolicyHandler(
+	builder.Services.BuildServiceProvider()
+		.GetRequiredService<IProductMicroservicePolicies>()
+		.GetFallbackPolicy()
+);
 
 var app = builder.Build();
 
