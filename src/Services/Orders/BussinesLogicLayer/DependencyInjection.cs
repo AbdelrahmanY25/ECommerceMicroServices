@@ -12,6 +12,8 @@ public static class DependencyInjection
 
 			services.AddTransient<IUserMicroservicePolicies, UserMicroservicePolicies>();
 
+			services.AddTransient<IProductMicroservicePolicies, ProductMicroservicePolicies>();
+
 			return services;
 		}
 	}

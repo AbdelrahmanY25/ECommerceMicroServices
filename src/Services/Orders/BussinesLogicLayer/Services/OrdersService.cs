@@ -137,6 +137,18 @@ public class OrdersService(IOrdersRepository ordersRepository, IValidator<OrderA
 		  return null;
 
 		OrderResponse orderResponse = order.Adapt<OrderResponse>();
+
+		if (orderResponse is not null)
+		{
+			foreach (OrderItemResponse orderItemResponse in orderResponse.OrderItems)
+			{
+				ProductResponse? product = await _productsMicroserviceClient.GetProductById(orderItemResponse.ProductID);
+
+				orderItemResponse.ProductName = product?.ProductName;
+				orderItemResponse.Category = product?.Category;
+			}
+		}
+
 		return orderResponse;
     }
 	
@@ -144,15 +156,45 @@ public class OrdersService(IOrdersRepository ordersRepository, IValidator<OrderA
 	{
 		IEnumerable<Order?> orders = await _ordersRepository.GetOrdersByCondition(filter);
     
-		IEnumerable<OrderResponse?> orderResponses = orders.Adapt<IEnumerable<OrderResponse?>>(); 
-		return [.. orderResponses];
+		List<OrderResponse?> orderResponses = orders.Adapt<List<OrderResponse?>>();
+
+		foreach (OrderResponse? orderResponse in orderResponses)
+		{
+			if (orderResponse is not null)
+			{
+				foreach (OrderItemResponse orderItemResponse in orderResponse.OrderItems)
+				{
+					ProductResponse? product = await _productsMicroserviceClient.GetProductById(orderItemResponse.ProductID);
+
+					orderItemResponse.ProductName = product?.ProductName;
+					orderItemResponse.Category = product?.Category;
+				}
+			}
+		}
+
+		return orderResponses;
 	}
 
 	public async Task<List<OrderResponse?>> GetOrders()
 	{
 		IEnumerable<Order?> orders = await _ordersRepository.GetOrders();
 
-		IEnumerable<OrderResponse?> orderResponses = orders.Adapt<IEnumerable<OrderResponse?>>();
-		return [.. orderResponses];
+		List<OrderResponse?> orderResponses = orders.Adapt<List<OrderResponse?>>();
+
+		foreach (OrderResponse? orderResponse in orderResponses)
+		{
+			if (orderResponse is not null)
+			{
+				foreach (OrderItemResponse orderItemResponse in orderResponse.OrderItems)
+				{
+					ProductResponse? product = await _productsMicroserviceClient.GetProductById(orderItemResponse.ProductID);
+
+					orderItemResponse.ProductName = product?.ProductName;
+					orderItemResponse.Category = product?.Category;
+				}
+			}
+		}
+
+		return orderResponses;
 	}
 }

@@ -1,4 +1,7 @@
-﻿global using System.Net.Http.Json;
+﻿global using System.Net;
+global using System.Text;
+global using System.Text.Json;
+global using System.Net.Http.Json;
 
 
 
@@ -27,6 +30,7 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Polly;
 global using Mapster;
 global using Polly.Retry;
+global using Polly.Fallback;
 global using MongoDB.Driver;
 global using FluentValidation;
 global using FluentValidation.Results;
