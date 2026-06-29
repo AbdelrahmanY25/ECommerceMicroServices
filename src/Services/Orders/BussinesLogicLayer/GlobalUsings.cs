@@ -24,6 +24,8 @@ global using DataAccessLayer.IRepository;
 
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Caching.Distributed;
+
 
 
 global using Polly;

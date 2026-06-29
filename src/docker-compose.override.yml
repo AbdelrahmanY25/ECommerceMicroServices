@@ -45,6 +45,14 @@ services:
     volumes:
       - ../mongodb-init:/docker-entrypoint-initdb.d
   
+  # distributedcache: Redis cache for the Orders API
+  distributedcache:
+    container_name: distributedcache
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - services-network
   # API services
 
   # Users API service
@@ -98,6 +106,7 @@ services:
       - PRODUCTS_MICROSERVICE_HOST=products.api
       - PRODUCTS_MICROSERVICE_PORT=8080
       - ConnectionStrings__DefaultConnection=mongodb://ordersdb:27017
+      - ConnectionStrings__Redis=distributedcache:6379
     depends_on:
       - ordersdb
       - users.api

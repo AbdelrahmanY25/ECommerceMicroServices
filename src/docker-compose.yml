@@ -9,6 +9,9 @@ services:
   
   ordersdb:
     image: mongo:latest
+  
+  distributedcache:
+    image: redis:latest
 
   users.api:
     image: ${DOCKER_REGISTRY-}usersapi
