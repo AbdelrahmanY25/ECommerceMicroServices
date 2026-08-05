@@ -12,6 +12,9 @@ services:
   
   distributedcache:
     image: redis:latest
+  
+  rabbitmq:
+    image: rabbitmq:management
 
   users.api:
     image: ${DOCKER_REGISTRY-}usersapi

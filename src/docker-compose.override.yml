@@ -53,6 +53,19 @@ services:
       - "6379:6379"
     networks:
       - services-network
+  
+  rabbitmq:
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - services-network
+      
   # API services
 
   # Users API service
@@ -82,6 +95,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ConnectionStrings__DefaultConnection=Server=productsdb;Port=3306;Database=productsDb;User Id=appuser;Password=admin;
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__Port=5672
     depends_on:
       - productsdb
     ports:
@@ -107,6 +124,10 @@ services:
       - PRODUCTS_MICROSERVICE_PORT=8080
       - ConnectionStrings__DefaultConnection=mongodb://ordersdb:27017
       - ConnectionStrings__Redis=distributedcache:6379
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__Port=5672
     depends_on:
       - ordersdb
       - users.api
