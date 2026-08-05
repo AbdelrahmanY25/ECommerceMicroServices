@@ -10,6 +10,8 @@ public static class DependencyInjection
 
 			services.AddScoped<IProductsService, ProductsService>();
 
+			services.AddTransient<IRabbitMQPublisher, RabbitMQPublisher>();
+
 			return services;
 		}
 	}
