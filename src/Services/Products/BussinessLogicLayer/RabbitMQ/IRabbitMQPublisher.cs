@@ -2,5 +2,5 @@
 
 public interface IRabbitMQPublisher
 {
-	Task Publisher<T>(string routingKey, T message);
+	Task Publish<T>(string routingKey, T message);
 }

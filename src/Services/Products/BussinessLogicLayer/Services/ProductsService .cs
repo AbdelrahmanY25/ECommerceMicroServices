@@ -1,10 +1,15 @@
-﻿namespace BussinessLogicLayer.Services;
+﻿using BussinessLogicLayer.RabbitMQ.Messages;
 
-public class ProductsService(IValidator<ProductAddRequest> productAddRequestValidator, IValidator<ProductUpdateRequest> productUpdateRequestValidator, IProductsRepository productsRepository) : IProductsService
+namespace BussinessLogicLayer.Services;
+
+public class ProductsService(IValidator<ProductAddRequest> productAddRequestValidator,
+							 IValidator<ProductUpdateRequest> productUpdateRequestValidator,
+							 IProductsRepository productsRepository, IRabbitMQPublisher rabbitMQPublisher) : IProductsService
 {
+	private readonly IRabbitMQPublisher _rabbitMQPublisher = rabbitMQPublisher;
+	private readonly IProductsRepository _productsRepository = productsRepository;
 	private readonly IValidator<ProductAddRequest> _productAddRequestValidator = productAddRequestValidator;
 	private readonly IValidator<ProductUpdateRequest> _productUpdateRequestValidator = productUpdateRequestValidator;
-	private readonly IProductsRepository _productsRepository = productsRepository;
 
 	public async Task<ProductResponse?> AddProduct(ProductAddRequest productAddRequest)
 	{
@@ -35,7 +40,6 @@ public class ProductsService(IValidator<ProductAddRequest> productAddRequestVali
 		throw new ArgumentNullException(nameof(productAddRequest));
 	}
 
-
 	public async Task<bool> DeleteProduct(Guid productID)
 	{
 		Product? existingProduct = await _productsRepository.GetProductByCondition(temp => temp.ProductID == productID);
@@ -49,7 +53,6 @@ public class ProductsService(IValidator<ProductAddRequest> productAddRequestVali
 		return isDeleted;
 	}
 
-
 	public async Task<ProductResponse?> GetProductByCondition(Expression<Func<Product, bool>> conditionExpression)
 	{
 		Product? product = await _productsRepository.GetProductByCondition(conditionExpression);
@@ -62,7 +65,6 @@ public class ProductsService(IValidator<ProductAddRequest> productAddRequestVali
 		return productResponse;
 	}
 
-
 	public async Task<List<ProductResponse?>> GetProducts()
 	{
 		IEnumerable<Product?> products = await _productsRepository.GetProducts();
@@ -72,7 +74,6 @@ public class ProductsService(IValidator<ProductAddRequest> productAddRequestVali
 		return [.. productResponses];
 	}
 
-
 	public async Task<List<ProductResponse?>> GetProductsByCondition(Expression<Func<Product, bool>> conditionExpression)
 	{
 		IEnumerable<Product?> products = await _productsRepository.GetProductsByCondition(conditionExpression);
@@ -81,15 +82,11 @@ public class ProductsService(IValidator<ProductAddRequest> productAddRequestVali
 		return [.. productResponses];
 	}
 
-
 	public async Task<ProductResponse?> UpdateProduct(ProductUpdateRequest productUpdateRequest)
 	{
-		Product? existingProduct = await _productsRepository.GetProductByCondition(temp => temp.ProductID == productUpdateRequest.ProductID);
-
-		if (existingProduct is null)
-		{
-			throw new ArgumentException("Invalid Product ID");
-		}
+		Product? existingProduct = await _productsRepository
+			.GetProductByCondition(temp => temp.ProductID == productUpdateRequest.ProductID) ??
+				throw new ArgumentException("Invalid Product ID");
 
 		ValidationResult validationResult = await _productUpdateRequestValidator.ValidateAsync(productUpdateRequest);
 
@@ -101,10 +98,19 @@ public class ProductsService(IValidator<ProductAddRequest> productAddRequestVali
 
 		Product product = productUpdateRequest.Adapt<Product>();
 
+		bool isProductNameChanged = productUpdateRequest.ProductName != existingProduct.ProductName;
+
 		Product? updatedProduct = await _productsRepository.UpdateProduct(product);
 
-		ProductResponse? updatedProductResponse = updatedProduct.Adapt<ProductResponse>();
+		if (isProductNameChanged)
+		{
+			string routingKey = "product.update.name";
 
-		return updatedProductResponse;
+			var message = new ProductNameUpdateMessage(product.ProductID, product.ProductName);
+
+			await _rabbitMQPublisher.Publish(routingKey, message);
+		}
+
+		return updatedProduct.Adapt<ProductResponse>();
 	}
 }
