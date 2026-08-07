@@ -28,7 +28,7 @@ public class RabbitMQPublisher : IRabbitMQPublisher, IDisposable
 		_channel = _connection.CreateChannelAsync().GetAwaiter().GetResult();
 	}
 
-	public async Task Publish<T>(string routingKey, T message)
+	public async Task PublishAsync<T>(string routingKey, T message)
 	{
 		string messageJson = JsonSerializer.Serialize(message);
 		byte[] messageBodyInBytes = Encoding.UTF8.GetBytes(messageJson);

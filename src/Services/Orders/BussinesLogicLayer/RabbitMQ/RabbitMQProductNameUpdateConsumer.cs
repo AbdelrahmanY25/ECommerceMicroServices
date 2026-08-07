@@ -30,7 +30,7 @@ public class RabbitMQProductNameUpdateConsumer : IRabbitMQProductNameUpdateConsu
 		_channel = _connection.CreateChannelAsync().GetAwaiter().GetResult();
 	}
 
-	public async Task Consume()
+	public async Task ConsumeAsync()
 	{
 		string routingKey = "product.update.name";
 

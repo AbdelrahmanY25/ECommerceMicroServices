@@ -16,6 +16,10 @@ public static class DependencyInjection
 			
 			services.AddTransient<IPollyPolicies, PollyPolicies>();
 
+			services.AddTransient<IRabbitMQProductNameUpdateConsumer, RabbitMQProductNameUpdateConsumer>();
+
+			services.AddHostedService<RabbitMQProductNameUpdateHostedService>();
+
 			return services;
 		}
 	}

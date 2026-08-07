@@ -2,5 +2,6 @@
 
 public interface IRabbitMQProductNameUpdateConsumer
 {
-	Task Consume();
+	Task ConsumeAsync();
+	void Dispose();
 }

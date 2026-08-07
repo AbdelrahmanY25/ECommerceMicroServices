@@ -8,6 +8,7 @@ global using System.Net.Http.Json;
 global using BussinesLogicLayer.Policies;
 global using BussinesLogicLayer.Services;
 global using BussinesLogicLayer.Contracts;
+global using BussinesLogicLayer.RabbitMQ;
 global using BussinesLogicLayer.IServices;
 global using BusinessLogicLayer.Validators;
 global using BussinesLogicLayer.Contracts.Users;
@@ -15,7 +16,7 @@ global using BussinesLogicLayer.HttpClients.Users;
 global using BussinesLogicLayer.RabbitMQ.Messages;
 global using BussinesLogicLayer.Contracts.Products;
 global using BussinesLogicLayer.HttpClients.Products;
-
+global using BussinesLogicLayer.RabbitMQ.HostedServices;
 
 
 global using DataAccessLayer.Entities;
@@ -24,6 +25,7 @@ global using DataAccessLayer.IRepository;
 
 
 global using Microsoft.Extensions.Logging;
+global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Caching.Distributed;

@@ -108,7 +108,7 @@ public class ProductsService(IValidator<ProductAddRequest> productAddRequestVali
 
 			var message = new ProductNameUpdateMessage(product.ProductID, product.ProductName);
 
-			await _rabbitMQPublisher.Publish(routingKey, message);
+			await _rabbitMQPublisher.PublishAsync(routingKey, message);
 		}
 
 		return updatedProduct.Adapt<ProductResponse>();
