@@ -11,8 +11,9 @@ global using BussinesLogicLayer.Contracts;
 global using BussinesLogicLayer.IServices;
 global using BusinessLogicLayer.Validators;
 global using BussinesLogicLayer.Contracts.Users;
-global using BussinesLogicLayer.Contracts.Products;
 global using BussinesLogicLayer.HttpClients.Users;
+global using BussinesLogicLayer.RabbitMQ.Messages;
+global using BussinesLogicLayer.Contracts.Products;
 global using BussinesLogicLayer.HttpClients.Products;
 
 
@@ -23,9 +24,9 @@ global using DataAccessLayer.IRepository;
 
 
 global using Microsoft.Extensions.Logging;
+global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Caching.Distributed;
-
 
 
 global using Polly;
@@ -35,6 +36,8 @@ global using Polly.Retry;
 global using Polly.Timeout;
 global using Polly.Fallback;
 global using MongoDB.Driver;
+global using RabbitMQ.Client;
 global using FluentValidation;
 global using Polly.CircuitBreaker;
+global using RabbitMQ.Client.Events;
 global using FluentValidation.Results;
